@@ -1,3 +1,4 @@
-<p>
-  mockup works!
-</p>
+<div class="container">
+  <app-choice (onSelectedTrack)="navigateSelected($event)"></app-choice>
+  <app-canvas [newSelectedTrack]="wasSelectedTrack"></app-canvas>
+</div>

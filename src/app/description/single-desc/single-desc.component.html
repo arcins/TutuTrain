@@ -1,0 +1,14 @@
+<div class="row">
+  <div class="col-xs-2"><img
+      [src]="track.imagePath"
+      alt="{{ track.name }}"
+      class="img-responsive img-thumbnail"
+      style="max-height: 300px; margin: 3px;">
+  </div>
+  <div class="col-xs-10">
+    <div><h3><b>{{ track.trackType }} - {{ track.name }}</b></h3>
+      <h4>Piko numer: {{ track.pikoNumber }}</h4>
+    </div>
+    <div>{{ track.description }}</div>
+  </div>
+</div>

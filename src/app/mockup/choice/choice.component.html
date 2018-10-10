@@ -1,0 +1,17 @@
+<p>
+  Wybierz rodzaj toru:
+</p>
+
+<div  *ngFor="let trackSingle of tracks" class="col-xs-2">
+  <a
+    (click)="onSelected(trackSingle.pikoNumber)"
+    [ngStyle]="{'border': (trackSingle.pikoNumber==selectedTrack)? '2px solid #009900':''}"
+    class="list-group-item clearfix"
+    style="cursor: pointer">
+  <img
+      [src]="trackSingle.imagePath"
+      alt="{{ trackSingle.name }}"
+      class="img-responsive img-thumbnail"
+      style="max-height: 300px;"></a>
+      {{ trackSingle.name }}
+</div>

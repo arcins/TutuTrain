@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
+import { Tracks } from '../shared/tracks.model';
+import { TracksService } from '../shared/tracks.service';
 
 @Component({
   selector: 'app-description',
@@ -6,10 +9,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./description.component.scss']
 })
 export class DescriptionComponent implements OnInit {
+  tracks: Tracks[];
 
-  constructor() { }
+  constructor(private tracksService: TracksService) { }
 
   ngOnInit() {
+        this.tracks = this.tracksService.getTracks();
   }
 
 }
