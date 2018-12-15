@@ -12,11 +12,19 @@ export class CanvasComponent implements OnInit {
   @Input() newSelectedTrack: string;
   mockupTracks: MockupTracks[];
 
+  //canvas
   cTracks;
   ctx;
   width;
   height;
   scale = 2;
+  //frame
+  delay = 1000 / 30;
+  time = 0;
+  frame = -1;
+  req;
+  isPlaying = false;
+  requestId;
 
   constructor(private mockupTracksService: MockupTracksService) {}
 
@@ -50,7 +58,39 @@ export class CanvasComponent implements OnInit {
 
   //main canvas loop
   canvasLoop () {
+    //buffer canvas1
+    let cTracksBuffer =  <HTMLCanvasElement> document.createElement('canvas');
+    cTracksBuffer.width = this.cTracks.width;
+    cTracksBuffer.height = this.cTracks.height;
+    let ctxBuffer = cTracksBuffer.getContext('2d');
+    ctxBuffer.restore(); // restores the coordinate system back to (0,0)
+    ctxBuffer.save();
+    ctxBuffer.beginPath();
+    ctxBuffer.moveTo(10,10);
+    ctxBuffer.lineTo(10,30);
+    ctxBuffer.stroke();
+    //render the buffered canvas onto the original canvas element
+    this.ctx.drawImage(cTracksBuffer, 0, 0);
+    //const animLoop = new FpsCtrl(30, this.draw);
+    this.start();
+    //this.loop();
     this.cTracks.addEventListener("click", ($event) => {this.putTrack($event, this.newSelectedTrack)}, false);
+  }
+
+  draw() {
+    this.cTracks.addEventListener("mousemove", ($event) => {this.moveMouseTrack($event, this.newSelectedTrack)}, false);
+  }
+
+  moveMouseTrack(e, trackType) {
+    let rotate_glob = 0;
+    if (trackType=='55201')	{
+      this.torProsty(e.offsetX,e.offsetY, rotate_glob, this.scale);
+    }
+    if (trackType=='55212') {
+      this.torLukowy(e.offsetX,e.offsetY, rotate_glob, this.scale);
+      rotate_glob +=30;
+    }
+
   }
 
   putTrack(e, trackType) {
@@ -106,6 +146,30 @@ export class CanvasComponent implements OnInit {
     console.log(' x2 = ', x2, ' y2 = ', y2);
   }
 
+  loop(timestamp) {
+      if (this.time == 0) {
+          this.time = timestamp;
+      }
+      let seg = Math.floor((timestamp - this.time) / this.delay);
+      if (seg > this.frame) {
+          this.frame = seg;
+
+          this.draw(//{
+              //time: timestamp,
+              //frame: this.frame
+          //}
+          )
+      }
+      this.req = requestAnimationFrame(this.loop.bind(this))
+  }
+
+  start() {
+      this.requestId = requestAnimationFrame(this.loop.bind(this))
+  }
+
+  pause() {
+      cancelAnimationFrame(this.requestId)
+  }
 
 
 }
