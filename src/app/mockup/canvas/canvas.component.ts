@@ -17,12 +17,14 @@ export class CanvasComponent implements OnInit {
   ctx;
   width;
   height;
-  scale = 2;
+  scale = 1;
   //buffer Canvas
   cTracksBuffer;
   ctxBuffer;
   cBackBuffer;
   ctxBack;
+
+  rotateplus = 0;
 
   //frame
   delay = 1000 / 30;
@@ -114,11 +116,13 @@ export class CanvasComponent implements OnInit {
     this.ctx.clearRect(0, 0, this.width, this.height);
     let rotate_glob = 0;
     if (trackType=='55201')	{
-      this.torProsty(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale, '#990066');
+      let points = this.torProsty(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale, '#990066');
+      console.log(points);
       this.mockupTracksService.addMockupTrack(trackType);
+          this.rotateplus += this.rotateplus + 10;
     }
     if (trackType=='55212') {
-      this.torLukowy(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale);
+      let points = this.torLukowy(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale);
       rotate_glob +=30;
       this.mockupTracksService.addMockupTrack(trackType);
     }
@@ -150,24 +154,38 @@ export class CanvasComponent implements OnInit {
     this.drawLukowy(ctx, 0, 0, 545.63/scale, 30, 0);
     ctx.restore(); // restores the coordinate system back to (0,0)
     ctx.save();
+    let y2 = pos_y - Math.sin(30)*545.63;
+    let x2 = pos_x+545.63 - Math.cos(30);
+    ctx.fillRect(pos_x,pos_y,4,4);
 
+    return [[pos_x, pos_y, rotate], [x2, y2, rotate+30]];
   }
 
   torProsty(canvas, pos_x, pos_y, rotate,scale, color) {
+    let list_points = [];
     let ctx = canvas;
+    rotate = this.rotateplus;
     ctx.translate(Math.round(pos_x), Math.round(pos_y)); // now the position (0,0) is found at (250,50)
     ctx.rotate(rotate*Math.PI/180); // rotate around the start point of your line
     ctx.moveTo(0,0) // this will actually be (250,50) in relation to the upper left corner
     ctx.strokeStyle = color;
-    ctx.strokeRect(-8.25/scale, 0 , 16.5/scale, -239.07/scale); // (250,250)
+    ctx.strokeRect(0, -8.25/scale, 239.07/scale, 16.5/scale); // (250,250)
     ctx.strokeStyle = color;
     ctx.stroke();
     ctx.restore(); // restores the coordinate system back to (0,0)
     ctx.save();
-    let y2 = (239.07 * Math.sin(rotate)) + pos_y;
-    let x2 = (239.07 * Math.cos(rotate)) + pos_x;
+
+    //console.log(239.07 * Math.sin(rotate*Math.PI/180));
+    // let y2 = pos_y - (239.07 * Math.sin(rotate*Math.PI/180));
+    // let x2 = (239.07 * Math.cos(rotate)) + pos_x;
+    let y2 = pos_y + 239.07 * Math.sin(this.rotateplus*Math.PI/180);
+      let x2 = pos_x + 239.07 *Math.cos(this.rotateplus*Math.PI/180);
     //console.log(' x1 = ', pos_x, ' y1 = ', pos_y, 'rotate = ', rotate);
     //console.log(' x2 = ', x2, ' y2 = ', y2);
+    ctx.fillRect(pos_x,pos_y,1,1);
+    ctx.fillRect(x2/scale,y2/scale,3,3);
+
+    return [[pos_y, pos_x, rotate], [y2, x2, rotate]];
   }
 
   loop(timestamp) {
