@@ -123,8 +123,9 @@ export class CanvasComponent implements OnInit {
     }
     if (trackType=='55212') {
       let points = this.torLukowy(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale);
-      rotate_glob +=30;
+      rotate_glob += 0;
       this.mockupTracksService.addMockupTrack(trackType);
+      this.rotateplus = this.rotateplus + 30;
     }
     this.ctxBuffer.drawImage(this.cBackBuffer, 0, 0);
     this.ctx.drawImage(this.cTracksBuffer, 0, 0);
@@ -148,16 +149,20 @@ export class CanvasComponent implements OnInit {
 
   torLukowy(canvas, pos_x, pos_y, rotate, scale) {
     let ctx = canvas;
+    rotate = this.rotateplus;
     ctx.translate(Math.round(pos_x), Math.round(pos_y));
-    ctx.rotate((rotate*Math.PI/180));
+    ctx.rotate(((rotate+90)*Math.PI/180));
     ctx.moveTo(0,0) // this will actually be (250,50) in relation to the upper left corner
     this.drawLukowy(ctx, 0, 0, 545.63/scale, 30, 0);
     ctx.restore(); // restores the coordinate system back to (0,0)
     ctx.save();
-    let y2 = pos_y - Math.sin(30)*545.63;
-    let x2 = pos_x+545.63 - Math.cos(30);
-    ctx.fillRect(pos_x,pos_y,4,4);
+    // let y2 = pos_y + Math.sin(30)*545.63;
+    // let x2 = pos_x + 545.63 *Math.cos(30);
 
+    let y2 = pos_y + Math.sin((this.rotateplus+15)*Math.PI/180)*(545.63/2+(16.5/2));
+    let x2 = pos_x + Math.cos((this.rotateplus+15)*Math.PI/180)*(545.63/2+(16.5/2));
+    ctx.fillRect(pos_x,pos_y,1,1);
+    ctx.fillRect(x2,y2,3,3);
     return [[pos_x, pos_y, rotate], [x2, y2, rotate+30]];
   }
 
