@@ -12,9 +12,9 @@ export class MockupTracksService {
   getMockupTracks() {
     return this.mockupTracks;
   }
-  addMockupTrack(newTrack: string) {
+  addMockupTrack(newTrack: string, points) {
     this.idNumber++;
-    this.mockupTracks.push(new MockupTracks(this.idNumber, newTrack));
+    this.mockupTracks.push(new MockupTracks(this.idNumber, newTrack, points));
   }
   deleteFromMockupTrack(idTrack: number) {
 //    this.mockupTracks.splice(this.mockupTracks.indexOf(idTrack), 1);

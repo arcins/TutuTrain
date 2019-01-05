@@ -118,13 +118,13 @@ export class CanvasComponent implements OnInit {
     if (trackType=='55201')	{
       let points = this.torProsty(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale, '#990066');
       console.log(points);
-      this.mockupTracksService.addMockupTrack(trackType);
+      this.mockupTracksService.addMockupTrack(trackType, points);
           this.rotateplus += this.rotateplus + 10;
     }
     if (trackType=='55212') {
       let points = this.torLukowy(this.ctxBack, e.offsetX,e.offsetY, rotate_glob, this.scale);
       rotate_glob += 0;
-      this.mockupTracksService.addMockupTrack(trackType);
+      this.mockupTracksService.addMockupTrack(trackType, points);
       this.rotateplus = this.rotateplus + 30;
     }
     this.ctxBuffer.drawImage(this.cBackBuffer, 0, 0);
@@ -156,14 +156,12 @@ export class CanvasComponent implements OnInit {
     this.drawLukowy(ctx, 0, 0, 545.63/scale, 30, 0);
     ctx.restore(); // restores the coordinate system back to (0,0)
     ctx.save();
-    // let y2 = pos_y + Math.sin(30)*545.63;
-    // let x2 = pos_x + 545.63 *Math.cos(30);
 
     let y2 = pos_y + Math.sin((this.rotateplus+15)*Math.PI/180)*(545.63/2+(16.5/2));
     let x2 = pos_x + Math.cos((this.rotateplus+15)*Math.PI/180)*(545.63/2+(16.5/2));
     ctx.fillRect(pos_x,pos_y,1,1);
     ctx.fillRect(x2,y2,3,3);
-    return [[pos_x, pos_y, rotate], [x2, y2, rotate+30]];
+    return [[pos_x*scale, pos_y*scale, rotate], [x2, y2, rotate+30]];
   }
 
   torProsty(canvas, pos_x, pos_y, rotate,scale, color) {
@@ -180,17 +178,12 @@ export class CanvasComponent implements OnInit {
     ctx.restore(); // restores the coordinate system back to (0,0)
     ctx.save();
 
-    //console.log(239.07 * Math.sin(rotate*Math.PI/180));
-    // let y2 = pos_y - (239.07 * Math.sin(rotate*Math.PI/180));
-    // let x2 = (239.07 * Math.cos(rotate)) + pos_x;
     let y2 = pos_y + 239.07 * Math.sin(this.rotateplus*Math.PI/180);
-      let x2 = pos_x + 239.07 *Math.cos(this.rotateplus*Math.PI/180);
-    //console.log(' x1 = ', pos_x, ' y1 = ', pos_y, 'rotate = ', rotate);
-    //console.log(' x2 = ', x2, ' y2 = ', y2);
+    let x2 = pos_x + 239.07 *Math.cos(this.rotateplus*Math.PI/180);
     ctx.fillRect(pos_x,pos_y,1,1);
     ctx.fillRect(x2/scale,y2/scale,3,3);
 
-    return [[pos_y, pos_x, rotate], [y2, x2, rotate]];
+    return [[pos_y*scale, pos_x*scale, rotate], [y2, x2, rotate]];
   }
 
   loop(timestamp) {
